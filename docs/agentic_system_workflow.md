@@ -45,8 +45,8 @@ flowchart TD
     T1 -->|BLOCK| T1B[Reject tool call → fallback sang RAG]
     T1 -->|ALLOW| T2[Tool Execution<br/>API / SQL / calculator / code]
     T2 --> T3[Tool Result Validation<br/>kiểm tra format / schema / cấu trúc]
-    T3 --> H2
-    T3 --> T4[Tool Result Sanitization<br/>lọc dữ liệu nhạy cảm / lỗi hệ thống]
+    T3 --> |INVALID| H2
+    T3 --> |VALID| T4[Tool Result Sanitization<br/>lọc dữ liệu nhạy cảm / lỗi hệ thống]
     T4 --> CTX
 
     H3 --> CTX
