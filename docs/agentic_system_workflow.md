@@ -87,6 +87,7 @@ flowchart TD
 
 ---
 
+
 ## 3. Bảng thiết kế luồng hệ thống (Revised)
 
 | # | Thành phần | Input | Xử lý chính | Output | Nếu thất bại |
@@ -95,8 +96,8 @@ flowchart TD
 | 2 | Input Guardrail | User query | Prompt injection, độ dài, schema | PASS/FAIL | FAIL → Reject |
 | 3 | Domain/Scope Classifier | Query hợp lệ | Xác định query có thuộc phạm vi software docs | IN-SCOPE/OUT | OUT → Fallback lịch sự |
 | 4 | LangGraph Agent Init | Query in-scope | Khởi tạo AgentState | Agent state | Retry/error handling |
-| 5 | Intent Router | Agent state | Xác định RAG/Tool/Memory/Direct | Route | Fallback route |
-| 6 | Memory Retrieval | Query + session | Lấy short-term + long-term memory | Relevant memories | Tiếp tục nếu rỗng |
+| 5 | Memory Retrieval | Query + session | Lấy short-term + long-term memory | Relevant memories | Tiếp tục nếu rỗng |
+| 6 | Intent Router | Agent state | Xác định RAG/Tool/Memory/Direct | Route | Fallback route |
 | 7 | Query Rewrite/Expansion | Original query | Tăng khả năng retrieval | Optimized query | Dùng query gốc |
 | 8 | Hybrid Retrieval | Optimized query | BM25 + Vector Search | Top-K documents | → Retrieval Grader fail path |
 | 9 | Reranker | Top-K documents | Sắp xếp theo relevance | Top-N contexts | Giảm N / retrieve lại |
