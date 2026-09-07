@@ -45,6 +45,7 @@ flowchart TD
     T1 -->|BLOCK| T1B[Reject tool call → fallback sang RAG]
     T1 -->|ALLOW| T2[Tool Execution<br/>API / SQL / calculator / code]
     T2 --> T3[Tool Result Validation<br/>kiểm tra format / schema / cấu trúc]
+    T3 --> H2
     T3 --> T4[Tool Result Sanitization<br/>lọc dữ liệu nhạy cảm / lỗi hệ thống]
     T4 --> CTX
 
@@ -103,7 +104,7 @@ flowchart TD
 | 11 | Tool Selection | Query + Agent state | Quyết định gọi tool nào | Selected tool | Fallback sang RAG |
 | 12 | Tool Guardrail | Tool call | Permission, risk, param check | ALLOW/BLOCK | BLOCK → fallback sang RAG |
 | 13 | Tool Execution | Tool + params | Gọi API/SQL/calculator/code | Tool result | Retry/fallback |
-| 14 | Tool Result Validation | Tool result | Kiểm tra dữ liệu đúng format / schema / cấu trúc chưa | VALID/INVALID | INVALID → Reject tool call → fallback sang RAG |
+| 14 | Tool Result Validation | Tool result | Kiểm tra dữ liệu đúng format / schema / cấu trúc chưa | VALID/INVALID | INVALID → Reject tool call → fallback sang Tool Selection |
 | 15 | Tool Result Sanitization | Tool result | Lọc dữ liệu nhạy cảm, lỗi hệ thống lộ ra | Clean tool result | Loại bỏ phần không an toàn |
 | 16 | Context Assembly | RAG context + Tool result + Memory | Gộp, dedup, gắn nguồn, cắt theo token budget | Assembled context | — |
 | 17 | Answer Generation | Assembled context | LLM tạo câu trả lời | Draft answer | Regenerate |
