@@ -103,16 +103,17 @@ flowchart TD
 | 11 | Tool Selection | Query + Agent state | Quyết định gọi tool nào | Selected tool | Fallback sang RAG |
 | 12 | Tool Guardrail | Tool call | Permission, risk, param check | ALLOW/BLOCK | BLOCK → fallback sang RAG |
 | 13 | Tool Execution | Tool + params | Gọi API/SQL/calculator/code | Tool result | Retry/fallback |
-| 14 | Tool Result Sanitization | Tool result | Lọc dữ liệu nhạy cảm, lỗi hệ thống lộ ra | Clean tool result | Loại bỏ phần không an toàn |
-| 15 | Context Assembly | RAG context + Tool result + Memory | Gộp, dedup, gắn nguồn, cắt theo token budget | Assembled context | — |
-| 16 | Answer Generation | Assembled context | LLM tạo câu trả lời | Draft answer | Regenerate |
-| 17 | Grounding/Answer Grader | Draft answer + evidence | Hallucination, faithfulness, citation check | PASS/FAIL | FAIL → Self-Correction |
-| 18 | Self-Correction | Failed answer/retrieval/tool | Phân loại lỗi → route lại đúng node | Improved answer | Retry tối đa N lần → Safe Fallback |
-| 19 | Output Guardrail | Final answer | Safety, PII, policy, format, citation | PASS/BLOCK | BLOCK → Safe Fallback / sanitize |
-| 20 | Memory Update (short-term) | Conversation | Lưu luôn vào short-term | Updated short-term | — |
-| 21 | Memory Update (long-term) | Conversation + result | Grader đánh giá có đáng lưu dài hạn | Updated long-term hoặc bỏ qua | Không lưu nếu không cần |
-| 22 | Observability (cross-cutting) | Toàn bộ pipeline | Log latency, token, cost, retrieval score, retries, guardrail events tại **mọi** node | Trace/metrics | — |
-| 23 | Response | Validated answer | Trả kết quả cho user | Final response | Safe fallback |
+| 14 | Tool Result Validation | Tool result | Kiểm tra dữ liệu đúng format / schema / cấu trúc chưa | VALID/INVALID | INVALID → Reject tool call → fallback sang RAG |
+| 15 | Tool Result Sanitization | Tool result | Lọc dữ liệu nhạy cảm, lỗi hệ thống lộ ra | Clean tool result | Loại bỏ phần không an toàn |
+| 16 | Context Assembly | RAG context + Tool result + Memory | Gộp, dedup, gắn nguồn, cắt theo token budget | Assembled context | — |
+| 17 | Answer Generation | Assembled context | LLM tạo câu trả lời | Draft answer | Regenerate |
+| 18 | Grounding/Answer Grader | Draft answer + evidence | Hallucination, faithfulness, citation check | PASS/FAIL | FAIL → Self-Correction |
+| 19 | Self-Correction | Failed answer/retrieval/tool | Phân loại lỗi → route lại đúng node | Improved answer | Retry tối đa N lần → Safe Fallback |
+| 20 | Output Guardrail | Final answer | Safety, PII, policy, format, citation | PASS/BLOCK | BLOCK → Safe Fallback / sanitize |
+| 21 | Memory Update (short-term) | Conversation | Lưu luôn vào short-term | Updated short-term | — |
+| 22 | Memory Update (long-term) | Conversation + result | Grader đánh giá có đáng lưu dài hạn | Updated long-term hoặc bỏ qua | Không lưu nếu không cần |
+| 23 | Observability (cross-cutting) | Toàn bộ pipeline | Log latency, token, cost, retrieval score, retries, guardrail events tại **mọi** node | Trace/metrics | — |
+| 24 | Response | Validated answer | Trả kết quả cho user | Final response | Safe fallback |
 
 ---
 
