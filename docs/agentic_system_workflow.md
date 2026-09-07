@@ -24,8 +24,8 @@ flowchart TD
     C -->|Out of scope| C1[Fallback: từ chối lịch sự / gợi ý phạm vi hỗ trợ]
     C -->|In scope| D[LangGraph Agent Init<br/>khởi tạo AgentState]
 
-    D --> E[Intent Router]
-    E --> F[Memory Retrieval<br/>short-term + long-term]
+    D --> E[Memory Retrieval<br/>short-term + long-term]
+    E --> F[Intent Router]
 
     F --> G{Route}
     G -->|RAG| H1[Query Rewrite / Expansion]
@@ -44,8 +44,9 @@ flowchart TD
     H2 --> T1[Tool Guardrail<br/>permission / risk]
     T1 -->|BLOCK| T1B[Reject tool call → fallback sang RAG]
     T1 -->|ALLOW| T2[Tool Execution<br/>API / SQL / calculator / code]
-    T2 --> T3[Tool Result Sanitization<br/>lọc dữ liệu nhạy cảm / lỗi hệ thống]
-    T3 --> CTX
+    T2 --> T3[Tool Result Validation<br/>kiểm tra format / schema / cấu trúc]
+    T3 --> T4[Tool Result Sanitization<br/>lọc dữ liệu nhạy cảm / lỗi hệ thống]
+    T4 --> CTX
 
     H3 --> CTX
 
