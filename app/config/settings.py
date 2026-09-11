@@ -29,6 +29,7 @@ class Settings(BaseSettings):
 
     # ====== LLM Model (Gemini - Evaluation) ======
     gemini_api_key: str = Field(alias="GEMINI_API_KEY")
+    gemini_provider: str = Field(default="google", alias="GEMINI_PROVIDER")
     gemini_model_name: str = Field(default="gemini-2.0-flash", alias="GEMINI_MODEL_NAME")
     gemini_temperature: float = Field(default=0.7, alias="GEMINI_TEMPERATURE")
     gemini_max_tokens: int = Field(default=2048, alias="GEMINI_MAX_TOKENS")
@@ -92,6 +93,7 @@ class Settings(BaseSettings):
                 timeout_seconds=self.ollama_timeout_seconds,
             ),
             llm_grading=GeminiConfig(
+                provider=self.gemini_provider,
                 model_name=self.gemini_model_name,
                 api_key=self.gemini_api_key,
                 temperature=self.gemini_temperature,
