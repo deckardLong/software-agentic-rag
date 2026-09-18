@@ -5,13 +5,13 @@ import re
 INJECTION_PATTERNS: list[re.Pattern] = [
     # ======= English Patterns =======
     re.compile(r"ignore (all |any )?(previous|above|prior) instructions", re.IGNORECASE),
-    re.compile(r"disregard (all |any )?(previous|above|prior) (instructions|rules|prompts)", re.IGNORECASE),
+    re.compile(r"disregard (all |any )?(the )?(previous|above|prior) (instructions|rules|prompts)", re.IGNORECASE),
     re.compile(r"forget (everything|all) (you|above)", re.IGNORECASE),
     re.compile(r"you are now (a|an)?\s*\w+", re.IGNORECASE),
     re.compile(r"reveal (your|the) (system )?prompt", re.IGNORECASE),
     re.compile(r"show me (your|the) (system )?(prompt|instructions)", re.IGNORECASE),
     re.compile(r"what (is|are) your (system )?(prompt|instructions)", re.IGNORECASE),
-    re.compile(r"act as (if )?you (are|were)", re.IGNORECASE),
+    re.compile(r"act as (if )?you (are|were|have)", re.IGNORECASE),
     re.compile(r"pretend (you are|to be)", re.IGNORECASE),
     re.compile(r"\bDAN\b"),     # # "Do Anything Now" popular jailbreak pattern
     re.compile(r"jailbreak", re.IGNORECASE),
