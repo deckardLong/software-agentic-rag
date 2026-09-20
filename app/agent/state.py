@@ -49,14 +49,15 @@ class AgentState(TypedDict, total=False):
     # ======== Generation & Grading ========
     draft_answer: str
     generation_model: str
-    generation_tokens_int: int
+    generation_tokens_in: int
     generation_tokens_out: int
     grounding_grade: Literal["pass", "fail"]
     grounding_grade_score: float    # faithfulness & hallucination
     grounding_grade_reason: Optional[str]
     generation_retry_count: int
     self_correction_target: Literal["retrieval", "tool", "generation"]  # find exact node to classify bug when answer fail grading
-    self_correction_reason: str
+    self_correction_reason: Optional[str]
+    total_retry_count: int
 
     # ======== Output Safety ========
     final_answer: str
