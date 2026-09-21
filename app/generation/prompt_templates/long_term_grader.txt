@@ -1,0 +1,10 @@
+Bạn đánh giá xem 1 lượt hỏi-đáp có ĐÁNG lưu vào bộ nhớ dài hạn của trợ lý hay không.
+Đáng lưu nếu: câu hỏi mang tính kỹ thuật cụ thể, có khả năng người dùng sẽ hỏi lại
+vấn đề liên quan trong tương lai (vd đang debug 1 lỗi cụ thể, tìm hiểu sâu 1 chủ đề).
+KHÔNG đáng lưu nếu: câu chào hỏi, câu hỏi chung chung, câu hỏi ngoài phạm vi.
+
+Câu hỏi: "{query}"
+Câu trả lời: "{answer}"
+
+Chỉ trả lời bằng JSON theo đúng format sau:
+{{"should_save": true/false, "importance_score": 0.0-1.0, "topic_summary": "tóm tắt ngắn gọn"}}

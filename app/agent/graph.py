@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 from app.agent.state import AgentState
 from app.guardrails.input_guardrail import check_input
 from app.guardrails.domain_classifier import classify_domain
+from app.agent.nodes.memory_retrieval_node import retrieve_memory
 
 # Build Graph
 def build_graph():
@@ -12,6 +13,7 @@ def build_graph():
     # ======== Add Nodes ========
     graph.add_node("input_guardrail", check_input)
     graph.add_node("domain_classifier", classify_domain)
+    graph.add_node("memory_retrieval", retrieve_memory)
 
     # ======== Add Edges ========
     graph.set_entry_point("input_guardrail")
@@ -31,10 +33,13 @@ def build_graph():
         "domain_classifier",
         lambda s: "in_scope" if s.get("domain_in_scope") else "out_of_scope",
         {
-            "in_scope": END,
+            "in_scope": "memory_retrieval",
             "out_of_scope": END
         }
     )
+
+    # Step 3: Memory Retrieval
+    graph.add_edge("memory_retrieval", END)
     
     return graph.compile()
 

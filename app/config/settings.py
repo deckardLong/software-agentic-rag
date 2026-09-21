@@ -16,6 +16,7 @@ from app.config.models import (
     SelfCorrectionConfig,
     ObservabilityConfig,
 )
+from app.config.models.memory import MemoryConfig
 
 class Settings(BaseSettings): 
     """Load config from .env"""
@@ -75,6 +76,12 @@ class Settings(BaseSettings):
     log_file: str = Field(default="logs/app.log", alias="LOG_FILE")
     trace_enabled: bool = Field(default=True, alias="TRACE_ENABLED")
     metrics_enabled: bool = Field(default=True, alias="METRICS_ENABLED")
+
+    # ====== Memory ======
+    memory_short_term_ttl_hours: int = Field(default=24, alias="MEMORY_SHORT_TERM_TTL_HOURS")
+    memory_short_term_max_turns: int = Field(default=10, alias="MEMORY_SHORT_TERM_MAX_TURNS")
+    memory_long_term_top_k: int = Field(default=3, alias="MEMORY_LONG_TERM_TOP_K")
+    memory_long_term_similarity_threshold: float = Field(default=0.75, alias="MEMORY_LONG_TERM_SIMILARITY_THRESHOLD")
 
     class Config:
         env_file = ".env"
@@ -140,6 +147,12 @@ class Settings(BaseSettings):
                 log_file=self.log_file,
                 trace_enabled=self.trace_enabled,
                 metrics_enabled=self.metrics_enabled,
+            ),
+            memory=MemoryConfig(
+                short_term_ttl_hours=self.memory_short_term_ttl_hours,
+                short_term_max_turns=self.memory_short_term_max_turns,
+                long_term_top_k=self.memory_long_term_top_k,
+                long_term_similarity_threshold=self.memory_long_term_similarity_threshold
             )
         )
 

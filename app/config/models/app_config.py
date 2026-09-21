@@ -7,6 +7,7 @@ from app.config.models.database import PostgreSQLConfig
 from app.config.models.retriever import BM25Config, RetrieverConfig
 from app.config.models.grading import GraderThresholds, SelfCorrectionConfig
 from app.config.models.observability import ObservabilityConfig
+from app.config.models.memory import MemoryConfig
 
 class AppConfig(BaseModel):
     """Master config - all sub-configs"""
@@ -19,3 +20,4 @@ class AppConfig(BaseModel):
     grader_thresholds: GraderThresholds
     self_correction: SelfCorrectionConfig
     observability: ObservabilityConfig
+    memory: MemoryConfig
