@@ -5,6 +5,7 @@ from app.agent.state import AgentState
 from app.guardrails.input_guardrail import check_input
 from app.guardrails.domain_classifier import classify_domain
 from app.agent.nodes.memory_retrieval_node import retrieve_memory
+from app.agent.intent_router import route_intent
 
 # Build Graph
 def build_graph():
@@ -14,6 +15,7 @@ def build_graph():
     graph.add_node("input_guardrail", check_input)
     graph.add_node("domain_classifier", classify_domain)
     graph.add_node("memory_retrieval", retrieve_memory)
+    graph.add_node("intent_router", route_intent)
 
     # ======== Add Edges ========
     graph.set_entry_point("input_guardrail")
@@ -39,7 +41,18 @@ def build_graph():
     )
 
     # Step 3: Memory Retrieval
-    graph.add_edge("memory_retrieval", END)
+    graph.add_edge("memory_retrieval", "intent_router")
+
+    # Step 4: Intent Router
+    graph.add_conditional_edges(
+        "intent_router",
+        lambda s: s.get("route", "rag"),    # default: RAG
+        {
+            "rag": END,
+            "tool": END,
+            "direct": END
+        }
+    )
     
     return graph.compile()
 
