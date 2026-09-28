@@ -22,6 +22,7 @@ class Chunk(Base, TimestampMixin):
     token_count: Mapped[Optional[int]] = mapped_column(Integer)
     embedding: Mapped[list] = mapped_column(Vector(config.embedding.dimension))
     content_hash: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+    heading_path: Mapped[Optional[str]] = mapped_column(Text)
 
     # ======= Relationships =======
     document: Mapped["Document"] = relationship(back_populates="chunks") # type: ignore

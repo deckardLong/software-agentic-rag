@@ -3,7 +3,7 @@
 from pydantic import BaseModel, Field
 
 class OllamaConfig(BaseModel):
-    """Ollama LLM configuration (local + development)"""
+    """Ollama LLM configuration (local + development + production)"""
     provider: str = "ollama"
     model_name: str = "llama3.1:latest"
     base_url: str = "http://localhost:11434"
@@ -16,11 +16,11 @@ class OllamaConfig(BaseModel):
         return f"{self.base_url}/api/generate"
 
 class GeminiConfig(BaseModel):
-    """Gemini LLM configuration (evaluation + production)"""
+    """Gemini LLM configuration (evaluation)"""
     provider: str = "google"
     model_name: str = "gemini-2.0-flash"
     api_key: str
-    temperature: float = Field(default=0.7, ge=0.0, le=1.0)
+    temperature: float = 0.0            # use for LLM-as-a-judge
     max_tokens: int = 2048
     timeout_seconds: int = 30
     max_retries: int = 3
