@@ -5,6 +5,10 @@ from app.agent.state import AgentState
 from app.agent.schemas import IntentRouting
 from app.generation.llm_client import get_generation_llm
 from app.observability.middleware import observe_node
+from app.agent.formatting import (
+    format_short_term_context as _format_short_term_context,
+    format_long_term_context as _format_long_term_context
+)
 from app.observability.logger import get_logger
 
 logger = get_logger(__name__)
@@ -17,22 +21,6 @@ _PROMPT_PATH = (
     / "intent_router.txt"
 )
 _PROMPT_TEMPLATE = _PROMPT_PATH.read_text(encoding="utf-8")
-
-# Format short-term context
-def _format_short_term_context(short_term_memory: list[dict]) -> str:
-    """Format short-term context saved"""
-    if not short_term_memory:
-        return "(không có)"
-    lines = [f'- Hỏi: "{turn["query"]}" | Đáp: "{turn["answer"][:150]}..."' for turn in short_term_memory]
-    return "\n".join(lines)
-
-# Format long-term context
-def _format_long_term_context(long_term_memory: list[dict]) -> str:
-    """Format long-term context saved"""
-    if not long_term_memory:
-        return "(không có)"
-    lines = [f'- {mem["topic"]} (độ liên quan: {mem["similarity"]})' for mem in long_term_memory]
-    return "\n".join(lines)
 
 # Define router intent 
 @observe_node("intent_router")

@@ -13,3 +13,4 @@ class RetrieverConfig(BaseModel):
     rerank_top_n: int = 5
     bm25_weight: float = 0.3
     vector_weight: float = 0.7
+    reranker_model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"

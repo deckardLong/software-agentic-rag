@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     ollama_temperature: float = Field(default=0.7, alias="OLLAMA_TEMPERATURE")
     ollama_max_tokens: int = Field(default=2048, alias="OLLAMA_MAX_TOKENS")
     ollama_timeout_seconds: int = Field(default=60, alias="OLLAMA_TIMEOUT_SECONDS") 
+    ollama_num_ctx: int = Field(default=8192, alias="OLLAMA_NUM_CTX")
 
     # ====== LLM Model (Gemini - Evaluation) ======
     gemini_api_key: str = Field(alias="GEMINI_API_KEY")
@@ -60,6 +61,7 @@ class Settings(BaseSettings):
     retriever_rerank_top_n: int = Field(default=5, alias="RETRIEVER_RERANK_TOP_N")
     retriever_bm25_weight: float = Field(default=0.3, alias="RETRIEVER_BM25_WEIGHT")
     retriever_vector_weight: float = Field(default=0.7, alias="RETRIEVER_VECTOR_WEIGHT")
+    retriever_reranker_model_name: str = Field(default="cross-encoder/ms-marco-MiniLM-L-6-v2", alias="RETRIEVER_RERANKER_MODEL_NAME")
 
     # ====== Thresholds ======
     retrieval_grade_threshold: float = Field(default=0.6, alias="RETRIEVAL_GRADE_THRESHOLD")
@@ -98,6 +100,7 @@ class Settings(BaseSettings):
                 temperature=self.ollama_temperature,
                 max_tokens=self.ollama_max_tokens,
                 timeout_seconds=self.ollama_timeout_seconds,
+                num_ctx=self.ollama_num_ctx
             ),
             llm_grading=GeminiConfig(
                 provider=self.gemini_provider,
@@ -131,6 +134,7 @@ class Settings(BaseSettings):
                 rerank_top_n=self.retriever_rerank_top_n,
                 bm25_weight=self.retriever_bm25_weight,
                 vector_weight=self.retriever_vector_weight,
+                reranker_model_name=self.retriever_reranker_model_name
             ),
             grader_thresholds=GraderThresholds(
                 retrieval_grade_threshold=self.retrieval_grade_threshold,

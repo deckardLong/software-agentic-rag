@@ -12,5 +12,6 @@ def get_generation_llm() -> ChatOllama:
         model=config.llm_generation.model_name,
         base_url=config.llm_generation.base_url,
         temperature=config.llm_generation.temperature,
-        timeout=config.llm_generation.timeout_seconds
+        timeout=config.llm_generation.timeout_seconds,
+        num_ctx=config.llm_generation.num_ctx
     )

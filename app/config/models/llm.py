@@ -10,6 +10,7 @@ class OllamaConfig(BaseModel):
     temperature: float = Field(default=0.7, ge=0.0, le=1.0)
     max_tokens: int = 2048
     timeout_seconds: int = 60
+    num_ctx: int = 8192                 # the number of context windows to handle error if it's overflow limit
 
     @property
     def api_endpoint(self) -> str:

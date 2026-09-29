@@ -32,6 +32,7 @@ class AgentState(TypedDict, total=False):
     retrieval_grade: Literal["relevant", "irrelevant"]
     retrieval_grade_score: float
     retrieval_retry_count: int
+    retrieval_fallback: bool    # retry but it doesn't work -> True
 
     # ======== Tool Pipeline ========
     selected_tool: Optional[str]    # tool name: "sql_query", "calculator", "code_analyzer"
