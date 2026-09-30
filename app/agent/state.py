@@ -42,6 +42,7 @@ class AgentState(TypedDict, total=False):
     tool_result_raw: Optional[Any]  # result before validation
     tool_validation_result: Literal["valid", "invalid"]
     tool_validation_error: Optional[str]
+    tool_retry_count: int
     sanitized_tool_result: Optional[dict]
 
     # ======== Context Assembly ========

@@ -15,6 +15,7 @@ from app.config.models import (
     GraderThresholds,
     SelfCorrectionConfig,
     ObservabilityConfig,
+    ToolGuardrailConfig
 )
 from app.config.models.memory import MemoryConfig
 
@@ -84,6 +85,14 @@ class Settings(BaseSettings):
     memory_short_term_max_turns: int = Field(default=10, alias="MEMORY_SHORT_TERM_MAX_TURNS")
     memory_long_term_top_k: int = Field(default=3, alias="MEMORY_LONG_TERM_TOP_K")
     memory_long_term_similarity_threshold: float = Field(default=0.75, alias="MEMORY_LONG_TERM_SIMILARITY_THRESHOLD")
+
+    # ====== Tool ======
+    tool_guardrail_sandbox_max_code_length: int = Field(default=2000, alias="TOOL_GUARDRAIL_SANDBOX_MAX_CODE_LENGTH")
+    tool_guardrail_database_inspect_blocked_tables: str = Field(
+        default="conversation_short_term,conversation_long_term",
+        alias="TOOL_GUARDRAIL_DB_BLOCKED_TABLES"
+    )
+    max_tool_retries: int = Field(default=3, alias="MAX_TOOL_RETRIES")
 
     class Config:
         env_file = ".env"
@@ -157,6 +166,12 @@ class Settings(BaseSettings):
                 short_term_max_turns=self.memory_short_term_max_turns,
                 long_term_top_k=self.memory_long_term_top_k,
                 long_term_similarity_threshold=self.memory_long_term_similarity_threshold
+            ),
+            tool_guardrail=ToolGuardrailConfig(
+                sandbox_max_code_length=self.tool_guardrail_sandbox_max_code_length,
+                database_inspect_blocked_tables=[
+                    t.strip() for t in self.tool_guardrail_database_inspect_blocked_tables.split(",") if t.strip()
+                ]
             )
         )
 

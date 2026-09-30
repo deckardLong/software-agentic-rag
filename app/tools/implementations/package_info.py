@@ -1,4 +1,4 @@
-# Define package info tool
+# Define package info tool to check info of packages
 
 import requests
 from pydantic import BaseModel, Field

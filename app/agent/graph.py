@@ -12,6 +12,12 @@ from app.rag.retriever.hybrid_retriever import hybrid_retrieve
 from app.rag.reranker import rerank
 from app.rag.retrieval_grader import grade_retrieval
 from app.rag.retrieval_fallback import fallback_retrieval
+from app.tools.selector import select_tool
+from app.tools.tool_guardrail import check_tool
+from app.tools.executor import execute_tool
+from app.tools.validator import validate_tool_result
+from app.tools.sanitizer import sanitize_tool_result
+from app.tools.routing import route_after_tool_guardrail, route_after_tool_validation
 
 # Build Graph
 def build_graph():
@@ -27,6 +33,11 @@ def build_graph():
     graph.add_node("reranker", rerank)
     graph.add_node("retrieval_grader", grade_retrieval)
     graph.add_node("retrieval_fallback", fallback_retrieval)
+    graph.add_node("tool_selection", select_tool)
+    graph.add_node("tool_guardrail", check_tool)
+    graph.add_node("tool_execution", execute_tool)
+    graph.add_node("tool_validation", validate_tool_result)
+    graph.add_node("tool_sanitization", sanitize_tool_result)
 
     # ======== Add Edges ========
     graph.set_entry_point("input_guardrail")
@@ -60,7 +71,7 @@ def build_graph():
         lambda s: s.get("route", "rag"),    # default: RAG
         {
             "rag": "query_rewrite",
-            "tool": END,
+            "tool": "tool_selection",
             "direct": END
         }
     )
@@ -82,6 +93,43 @@ def build_graph():
             "relevant": END,
             "retry": "query_rewrite",
             "fallback": "retrieval_fallback" 
+        }
+    )
+
+    # Step 9: Retrieval Fallback
+    graph.add_edge("retrieval_fallback", END)   # fallback
+
+    # Step 10: Tool Selection
+    graph.add_conditional_edges(
+        "tool_selection",
+        lambda s: "has_tool" if s.get("selected_tool") else "fall_back_to_rag",
+        {
+            "has_tool": "tool_guardrail",
+            "fall_back_to_rag": "query_rewrite"
+        }
+    )
+
+    # Step 11: Tool Guardrail
+    graph.add_conditional_edges(
+        "tool_guardrail",
+        route_after_tool_guardrail,
+        {
+            "allow": "tool_execution",
+            "block": "query_rewrite"
+        }
+    )
+
+    # Step 12: Tool Execution
+    graph.add_edge("tool_execution", "tool_validation")
+
+    # Step 13: Tool Validation
+    graph.add_conditional_edges(
+        "tool_validation",
+        route_after_tool_validation,
+        {
+            "valid": END,
+            "retry": "tool_selection",
+            "give_up": "query_rewrite"
         }
     )
     

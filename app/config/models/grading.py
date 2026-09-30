@@ -12,4 +12,5 @@ class SelfCorrectionConfig(BaseModel):
     """Retry policy"""
     max_retrieval_retries: int = 3
     max_generation_retries: int = 3
+    max_tool_retries: int = 3
     max_total_retries: int = 5

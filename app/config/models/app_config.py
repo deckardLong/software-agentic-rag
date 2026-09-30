@@ -8,6 +8,7 @@ from app.config.models.retriever import BM25Config, RetrieverConfig
 from app.config.models.grading import GraderThresholds, SelfCorrectionConfig
 from app.config.models.observability import ObservabilityConfig
 from app.config.models.memory import MemoryConfig
+from app.config.models.tool_guardrail import ToolGuardrailConfig
 
 class AppConfig(BaseModel):
     """Master config - all sub-configs"""
@@ -21,3 +22,4 @@ class AppConfig(BaseModel):
     self_correction: SelfCorrectionConfig
     observability: ObservabilityConfig
     memory: MemoryConfig
+    tool_guardrail: ToolGuardrailConfig

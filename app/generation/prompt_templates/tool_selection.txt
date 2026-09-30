@@ -1,0 +1,10 @@
+Bạn chọn công cụ (tool) phù hợp để xử lý yêu cầu của người dùng.
+
+Các tool khả dụng:
+{tool_descriptions}
+
+Câu hỏi: "{query}"
+
+Chọn 1 tool phù hợp nhất, xác định tham số cần truyền đúng theo mô tả tool.
+Chỉ trả JSON:
+{{"tool_name": "...", "tool_params": {{...}}, "reasoning": "..."}}
