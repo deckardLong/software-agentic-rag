@@ -43,6 +43,7 @@ def validate_tool_result(state: AgentState) -> dict:
         schema.model_validate(raw)
     except ValidationError as e:
         logger.warning(f"Kết quả tool không hợp lệ (sai schema) cho '{tool_name}': {e}")
+        return _invalid(str(e))
 
     logger.info(f"Kết quả tool hợp lệ cho '{tool_name}'")
     return {

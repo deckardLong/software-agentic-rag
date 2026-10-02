@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 from pydantic import Field
 from typing import Optional
 from functools import lru_cache
+from pathlib import Path
 from app.config.models import (
     AppConfig,
     OllamaConfig,
@@ -15,9 +16,12 @@ from app.config.models import (
     GraderThresholds,
     SelfCorrectionConfig,
     ObservabilityConfig,
-    ToolGuardrailConfig
+    ToolGuardrailConfig,
+    ContextAssemblyConfig
 )
 from app.config.models.memory import MemoryConfig
+
+ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
 
 class Settings(BaseSettings): 
     """Load config from .env"""
@@ -93,9 +97,15 @@ class Settings(BaseSettings):
         alias="TOOL_GUARDRAIL_DB_BLOCKED_TABLES"
     )
     max_tool_retries: int = Field(default=3, alias="MAX_TOOL_RETRIES")
+    github_token: str = Field(default="", alias="GITHUB_TOKEN")
+
+    # ====== Context Assembly ======
+    context_assembly_max_rag_tokens: int = Field(default=2000, alias="CONTEXT_ASSEMBLY_MAX_RAG_TOKENS")
+    context_assembly_max_tool_result_tokens: int = Field(default=800, alias="CONTEXT_ASSEMBLY_MAX_TOOL_RESULT_TOKENS")
+    context_assembly_max_memory_tokens: int = Field(default=600, alias="CONTEXT_ASSEMBLY_MAX_MEMORY_TOKENS")
 
     class Config:
-        env_file = ".env"
+        env_file = ENV_FILE
         env_file_encoding = "utf-8"
         case_sensitive = False
 
@@ -172,6 +182,11 @@ class Settings(BaseSettings):
                 database_inspect_blocked_tables=[
                     t.strip() for t in self.tool_guardrail_database_inspect_blocked_tables.split(",") if t.strip()
                 ]
+            ),
+            context_assembly=ContextAssemblyConfig(
+                max_rag_tokens=self.context_assembly_max_rag_tokens,
+                max_tool_result_tokens=self.context_assembly_max_tool_result_tokens,
+                max_memory_tokens=self.context_assembly_max_memory_tokens
             )
         )
 

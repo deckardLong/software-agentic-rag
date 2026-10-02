@@ -7,6 +7,7 @@ from app.config.models.retriever import BM25Config, RetrieverConfig
 from app.config.models.grading import GraderThresholds, SelfCorrectionConfig
 from app.config.models.observability import ObservabilityConfig
 from app.config.models.tool_guardrail import ToolGuardrailConfig
+from app.config.models.context_assembly import ContextAssemblyConfig
 from app.config.models.app_config import AppConfig
 
 __all__ = [
@@ -20,5 +21,6 @@ __all__ = [
     "SelfCorrectionConfig",
     "ObservabilityConfig",
     "ToolGuardrailConfig",
-    "AppConfig",
+    "ContextAssemblyConfig",
+    "AppConfig"
 ]

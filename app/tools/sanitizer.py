@@ -12,6 +12,7 @@ MAX_STRING_LENGTH = 2000
 
 # Secret pattern (Ex: Third API returns token/secret)
 _SECRET_PATTERN = re.compile(r"(?i)\b(api[_-]?key|token|secret|password)\s*[:=]\s*\S+")
+_SECRET_KEY_PATTERN = re.compile(r"(?i)(api[_-]?key|token|secret|password)")
 
 # Sanitize value
 def _sanitize_value(value):
@@ -21,7 +22,10 @@ def _sanitize_value(value):
             return redacted[:MAX_STRING_LENGTH] + "...(đã cắt bớt)"
         return redacted
     if isinstance(value, dict):
-        return {k: _sanitize_value(v) for k, v in value.items()}
+        return {
+            key: "[REDACTED]" if isinstance(key, str) and _SECRET_KEY_PATTERN.search(key) else _sanitize_value(item)
+            for key, item in value.items()
+        }
     if isinstance(value, list):
         return [_sanitize_value(v) for v in value]
     return value

@@ -65,7 +65,8 @@ class AgentState(TypedDict, total=False):
     final_answer: str
     output_guardrail_result: Literal["pass", "block"]
     output_guardrail_block_reason: Optional[str]
-    citations: list[dict]   # to know which docs it's retrieved
+    citations: list[dict]             # to know which docs it's retrieved
+    response_sources: list[dict]      # list of source for user  
 
     # ======== Memory Update ========
     should_save_short_term: bool

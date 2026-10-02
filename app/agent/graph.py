@@ -6,7 +6,7 @@ from app.guardrails.input_guardrail import check_input
 from app.guardrails.domain_classifier import classify_domain
 from app.agent.nodes.memory_retrieval_node import retrieve_memory
 from app.agent.intent_router import route_intent
-from app.agent.routing import route_after_retrieval_grade
+from app.agent.routing import route_after_retrieval_grade, route_after_grounding_grade
 from app.rag.query_rewrite import rewrite_query
 from app.rag.retriever.hybrid_retriever import hybrid_retrieve
 from app.rag.reranker import rerank
@@ -18,6 +18,15 @@ from app.tools.executor import execute_tool
 from app.tools.validator import validate_tool_result
 from app.tools.sanitizer import sanitize_tool_result
 from app.tools.routing import route_after_tool_guardrail, route_after_tool_validation
+from app.agent.nodes.direct_answer_node import skip_retrieval_and_tool
+from app.agent.nodes.context_assembly_node import assemble_context
+from app.agent.nodes.answer_generation_node import generate_answer
+from app.agent.nodes.grounding_grader_node import grade_grounding
+from app.agent.nodes.self_correction_node import self_correct
+from app.guardrails.output_guardrail import check_output
+from app.agent.nodes.safe_fallback_node import safe_fallback_answer
+from app.agent.nodes.memory_update_node import update_memory
+from app.agent.nodes.final_response_node import finalize_response
 
 # Build Graph
 def build_graph():
@@ -38,6 +47,15 @@ def build_graph():
     graph.add_node("tool_execution", execute_tool)
     graph.add_node("tool_validation", validate_tool_result)
     graph.add_node("tool_sanitization", sanitize_tool_result)
+    graph.add_node("direct_answer", skip_retrieval_and_tool)
+    graph.add_node("context_assembly", assemble_context)
+    graph.add_node("answer_generation", generate_answer)
+    graph.add_node("grounding_grader", grade_grounding)
+    graph.add_node("self_correction", self_correct)
+    graph.add_node("output_guardrail", check_output)
+    graph.add_node("safe_fallback", safe_fallback_answer)
+    graph.add_node("memory_update", update_memory)
+    graph.add_node("final_response", finalize_response)
 
     # ======== Add Edges ========
     graph.set_entry_point("input_guardrail")
@@ -72,7 +90,7 @@ def build_graph():
         {
             "rag": "query_rewrite",
             "tool": "tool_selection",
-            "direct": END
+            "direct": "direct_answer"
         }
     )
 
@@ -90,14 +108,14 @@ def build_graph():
         "retrieval_grader",
         route_after_retrieval_grade,
         {
-            "relevant": END,
+            "relevant": "context_assembly",
             "retry": "query_rewrite",
             "fallback": "retrieval_fallback" 
         }
     )
 
     # Step 9: Retrieval Fallback
-    graph.add_edge("retrieval_fallback", END)   # fallback
+    graph.add_edge("retrieval_fallback", "context_assembly")   # fallback
 
     # Step 10: Tool Selection
     graph.add_conditional_edges(
@@ -127,11 +145,64 @@ def build_graph():
         "tool_validation",
         route_after_tool_validation,
         {
-            "valid": END,
+            "valid": "tool_sanitization",
             "retry": "tool_selection",
             "give_up": "query_rewrite"
         }
     )
+
+    # Step 14: Tool Sanitization
+    graph.add_edge("tool_sanitization", "context_assembly")
+
+    # Step 15: Direct Answer
+    graph.add_edge("direct_answer", "context_assembly")
+
+    # Step 16: Context Assembly
+    graph.add_edge("context_assembly", "answer_generation")
+
+    # Step 17: Answer Generation
+    graph.add_edge("answer_generation", "grounding_grader")
+
+    # Step 18: Grounding Grader
+    graph.add_conditional_edges(
+        "grounding_grader",
+        route_after_grounding_grade,
+        {
+            "pass": "output_guardrail",
+            "retry": "self_correction",
+            "safe_fallback": "safe_fallback"
+        }
+    )
+
+    # Step 19: Self-Correction
+    graph.add_conditional_edges(
+        "self_correction",
+        lambda s: s["self_correction_target"],
+        {
+            "retrieval": "query_rewrite",
+            "tool": "tool_selection",
+            "generation": "answer_generation"
+        }
+    )
+
+    # Step 20: Output Guardrail
+    graph.add_conditional_edges(
+        "output_guardrail",
+        lambda s: s["output_guardrail_result"],
+        {
+            "pass": "memory_update",
+            "block": "safe_fallback"
+        }
+    )
+
+    # Step 21: Safe Fallback
+    graph.add_edge("safe_fallback", "memory_update")
+
+    # Step 22: Memory Update
+    graph.add_edge("memory_update", "final_response")
+
+    # Step 23: Final Response
+    graph.add_edge("final_response", END)
     
     return graph.compile()
 

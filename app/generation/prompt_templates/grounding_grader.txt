@@ -1,0 +1,18 @@
+Bạn kiểm tra xem CÂU TRẢ LỜI dưới đây có bám sát NGỮ CẢNH đã cho hay không (faithfulness check),
+để phát hiện hallucination.
+
+--- Ngữ cảnh đã cung cấp khi trả lời ---
+{context}
+--- Hết ngữ cảnh ---
+
+Câu hỏi: "{query}"
+Câu trả lời cần kiểm tra: "{answer}"
+
+Đánh giá:
+- is_grounded = true NẾU mọi khẳng định kỹ thuật trong câu trả lời đều có căn cứ trong Ngữ cảnh
+  (hoặc câu trả lời chỉ là giao tiếp thông thường, không có khẳng định kỹ thuật nào).
+- is_grounded = false NẾU có khẳng định kỹ thuật KHÔNG xuất hiện trong Ngữ cảnh (bịa đặt), hoặc
+  trích dẫn [n] sai số thứ tự so với tài liệu đã đánh số.
+
+Chỉ trả JSON:
+{{"is_grounded": true/false, "score": 0.0-1.0, "reason": "..."}}

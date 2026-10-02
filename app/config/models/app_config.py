@@ -9,6 +9,7 @@ from app.config.models.grading import GraderThresholds, SelfCorrectionConfig
 from app.config.models.observability import ObservabilityConfig
 from app.config.models.memory import MemoryConfig
 from app.config.models.tool_guardrail import ToolGuardrailConfig
+from app.config.models.context_assembly import ContextAssemblyConfig
 
 class AppConfig(BaseModel):
     """Master config - all sub-configs"""
@@ -23,3 +24,4 @@ class AppConfig(BaseModel):
     observability: ObservabilityConfig
     memory: MemoryConfig
     tool_guardrail: ToolGuardrailConfig
+    context_assembly: ContextAssemblyConfig
